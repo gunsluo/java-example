@@ -1,4 +1,4 @@
-package demo.gunsluo.im;
+package demo.gunsluo.im.log;
 
 
 import java.io.IOException;
