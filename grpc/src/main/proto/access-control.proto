@@ -1,0 +1,431 @@
+syntax = "proto3";
+package accesscontrol.pb;
+option go_package = "pb";
+option java_multiple_files = true;
+option java_generic_services = true;
+option java_package = "com.target.actl.grpc";
+option java_outer_classname = "AccessControlProto";
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+
+service AccessControl {
+  // register a accessible resource at service startup.
+  rpc RegisterResource(RegisterResourceRequest)
+      returns (RegisterResourceReply) {
+    option (google.api.http) = {
+      post : "/api/resource"
+      body : "*"
+    };
+  }
+  // register accessible resources at service startup.
+  rpc RegisterResources(RegisterResourcesRequest)
+      returns (RegisterResourcesReply) {}
+  // remove accessible resources at service startup.
+  rpc RemoveResource(RemoveResourceRequest) returns (RemoveResourceReply) {
+    option (google.api.http) = {
+      delete : "/api/resource/{source}"
+    };
+  }
+  // ListResources get sources by condition, return resources.
+  rpc ListResources(ListResourcesRequest) returns (ListResourcesReply) {
+    option (google.api.http) = {
+      get : "/api/resource"
+    };
+  }
+  // register a accessible action at service startup.
+  rpc RegisterAction(RegisterActionRequest) returns (RegisterActionReply) {
+    option (google.api.http) = {
+      post : "/api/action"
+      body : "*"
+    };
+  }
+  // register accessible actions at service startup.
+  rpc RegisterActions(RegisterActionsRequest) returns (RegisterActionsReply) {}
+  // remove accessible actions at service startup.
+  rpc RemoveAction(RemoveActionRequest) returns (RemoveActionReply) {
+    option (google.api.http) = {
+      delete : "/api/action/{action}"
+    };
+  }
+  // ListActions get actions by condition, return actions.
+  rpc ListActions(ListActionsRequest) returns (ListActionsReply) {
+    option (google.api.http) = {
+      get : "/api/action"
+    };
+  }
+  // Create a role to access control system, role include: rolename,ns,domain.
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleReply) {
+    option (google.api.http) = {
+      post : "/api/role"
+      body : "*"
+    };
+  }
+  // Remove a role from access control system, role include: rolename,ns,domain.
+  rpc RemoveRole(RemoveRoleRequest) returns (RemoveRoleReply) {
+    option (google.api.http) = {
+      delete : "/api/role/{role}"
+    };
+  }
+  // Get all roles from access control system.
+  rpc ListRoles(ListRolesRequest) returns (ListRolesReply) {
+    option (google.api.http) = {
+      get : "/api/role"
+    };
+  }
+  // Get all roles of subject from access control system.
+  rpc ListRolesBySubject(ListRolesBySubjectRequest)
+      returns (ListRolesBySubjectReply) {
+    option (google.api.http) = {
+      get : "/api/subject/role"
+    };
+  }
+  // bind role for a subject or a role, subject/role has all the perimissons for
+  // the role.
+  rpc RoleBinding(RoleBindingRequest) returns (RoleBindingReply) {
+    option (google.api.http) = {
+      post : "/role/relation/{role}"
+      body : "*"
+    };
+  }
+  // unbind role for a subject or a role
+  rpc RoleUnbind(RoleUnbindRequest) returns (RoleUnbindReply) {
+    option (google.api.http) = {
+      delete : "/role/relation/{role}"
+    };
+  }
+  // get subjects for the role from access control system.
+  rpc ListSubjects(ListSubjectsRequest) returns (ListSubjectsReply) {
+    option (google.api.http) = {
+      get : "/api/role/subjects"
+    };
+  }
+  // create policy to access control.
+  rpc CreatePolicy(CreatePolicyRequest) returns (CreatePolicyReply) {
+    option (google.api.http) = {
+      post : "/policy"
+      body : "*"
+    };
+  }
+  // update a policy to access control.
+  rpc UpdatePolicy(UpdatePolicyRequest) returns (UpdatePolicyReply) {
+    option (google.api.http) = {
+      put : "/policy"
+      body : "*"
+    };
+  }
+  // create a policy to access control if not found, else update it.
+  rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyReply) {
+    option (google.api.http) = {
+      post : "/upsertPolicy"
+      body : "*"
+    };
+  }
+  // remove policy from access control.
+  rpc RemovePolicy(RemovePolicyRequest) returns (RemovePolicyReply) {
+    option (google.api.http) = {
+      delete : "/policy/{id}"
+    };
+  }
+  // get policy by id from access control.
+  rpc GetPolicy(GetPolicyRequest) returns (GetPolicyReply) {}
+  // get policies by condition from access control.
+  rpc ListPolicies(ListPoliciesRequest) returns (ListPoliciesReply) {
+    option (google.api.http) = {
+      get : "/policy"
+    };
+  }
+  // verify policies of a subject.
+  rpc Verify(VerifyRequest) returns (VerifyReply) {
+    option (google.api.http) = {
+      post : "/policy/verify"
+      body : "*"
+    };
+  }
+}
+
+// resource
+message Resource {
+  string source = 1;
+  string description = 2;
+}
+
+// register a accessible resource at service startup.
+message RegisterResourceRequest {
+  string source = 1;
+  string description = 2;
+}
+message RegisterResourceReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// register accessible resources at service startup.
+message RegisterResourcesRequest {
+  //
+  repeated Resource resources = 1;
+}
+message RegisterResourcesReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// remove accessible resources at service startup.
+message RemoveResourceRequest {
+  //
+  string source = 1;
+}
+message RemoveResourceReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// ListResources get sources by condition, return resources.
+message ListResourcesRequest {
+  string prefix = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListResourcesReply {
+  bool success = 1;
+  string error = 2;
+  repeated Resource resources = 3;
+}
+
+// Action
+message Action {
+  string action = 1;
+  string description = 2;
+}
+
+// register a accessible action at service startup.
+message RegisterActionRequest {
+  string action = 1;
+  string description = 2;
+}
+message RegisterActionReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// register accessible actions at service startup.
+message RegisterActionsRequest {
+  //
+  repeated Action actions = 1;
+}
+message RegisterActionsReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// remove accessible actions at service startup.
+message RemoveActionRequest {
+  //
+  string action = 1;
+}
+message RemoveActionReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// ListActions get actions by condition, return actions.
+message ListActionsRequest {
+  string prefix = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListActionsReply {
+  bool success = 1;
+  string error = 2;
+  repeated Action actions = 3;
+}
+
+// Create a role to access control system, role include: rolename,ns,domain.
+message CreateRoleRequest {
+  //
+  string role = 1;
+}
+message CreateRoleReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// Remove a role from access control system, role include: rolename,ns,domain.
+message RemoveRoleRequest {
+  //
+  string role = 1;
+}
+message RemoveRoleReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// get all roles from access control system.
+message ListRolesRequest {
+  string prefix = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListRolesReply {
+  bool success = 1;
+  string error = 2;
+  repeated string roles = 3;
+}
+
+// get all roles from access control system.
+message ListRolesBySubjectRequest {
+  string subject = 1;
+  string prefix = 2;
+}
+message ListRolesBySubjectReply {
+  bool success = 1;
+  string error = 2;
+  repeated string roles = 3;
+}
+
+// bind role for a subject or a role, subject/role has all the perimissons for
+// the role.
+message RoleBindingRequest {
+  string kind = 1; // subject/role
+  string name = 2;
+  string role = 3;
+}
+message RoleBindingReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// unbind role for a subject or a role
+message RoleUnbindRequest {
+  string kind = 1; // subject/role
+  string name = 2;
+  string role = 3;
+}
+message RoleUnbindReply {
+  bool success = 1;
+  string error = 2;
+}
+
+message Subject {
+  string name = 1;
+  bool role = 2;
+}
+// get subjects to access control system.
+message ListSubjectsRequest {
+  string prefix = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListSubjectsReply {
+  bool success = 1;
+  string error = 2;
+  repeated Subject subjects = 3;
+}
+
+// create policies.
+message CreatePolicyRequest {
+  string id = 1;
+  string description = 2;
+  string effect = 3;
+  repeated string subjects = 4;
+  repeated string sources = 5;
+  repeated string actions = 6;
+  string conditions = 7;
+}
+message CreatePolicyReply {
+  bool success = 1;
+  string error = 2;
+  string id = 3;
+}
+
+// update policies.
+message UpdatePolicyRequest {
+  string id = 1;
+  string description = 2;
+  string effect = 3;
+  repeated string subjects = 4;
+  repeated string sources = 5;
+  repeated string actions = 6;
+  string conditions = 7;
+}
+message UpdatePolicyReply {
+  bool success = 1;
+  string error = 2;
+  string id = 3;
+}
+
+// upsert policies.
+message UpsertPolicyRequest {
+  string id = 1;
+  string description = 2;
+  string effect = 3;
+  repeated string subjects = 4;
+  repeated string sources = 5;
+  repeated string actions = 6;
+  string conditions = 7;
+}
+message UpsertPolicyReply {
+  bool success = 1;
+  string error = 2;
+  string id = 3;
+}
+
+// remove policies.
+message RemovePolicyRequest {
+  //
+  string id = 1;
+}
+message RemovePolicyReply {
+  bool success = 1;
+  string error = 2;
+}
+
+// get policy.
+message Policy {
+  string id = 1;
+  string description = 2;
+  string effect = 3;
+  repeated string subjects = 4;
+  repeated string sources = 5;
+  repeated string actions = 6;
+  string conditions = 7;
+}
+message GetPolicyRequest {
+  //
+  string id = 1;
+}
+message GetPolicyReply {
+  bool success = 1;
+  string error = 2;
+  Policy policy = 3;
+}
+
+message ListPoliciesRequest {
+  string subject = 1;
+  string role = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+message ListPoliciesReply {
+  bool success = 1;
+  string error = 2;
+  repeated Policy policies = 3;
+}
+
+// verify policies a subject.
+message VerifyRequest {
+  string subject = 1;
+  string source = 2;
+  string action = 3;
+  string context = 4;
+}
+message VerifyReply {
+  bool success = 1;
+  string error = 2;
+}
