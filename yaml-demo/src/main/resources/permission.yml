@@ -1,0 +1,12 @@
+---
+features:
+- name: Project Well Manager
+  pps:
+  - project-well-manager-read-access
+  roles:
+  - Project Well Manager
+- name: Project Well Manager2
+  pps:
+  - project-well-manager-read-access
+  roles:
+  - Project Well Manager
