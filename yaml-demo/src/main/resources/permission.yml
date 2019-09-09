@@ -5,8 +5,24 @@ features:
   - project-well-manager-read-access
   roles:
   - Project Well Manager
-- name: Project Well Manager2
-  pps:
-  - project-well-manager-read-access
-  roles:
-  - Project Well Manager
+pps:
+- name: project-well-manager-read-access
+  description: reading access for project well manager
+  resources:
+  - WellSchema:well
+  actions:
+  - read
+  conditions:
+  - name: project
+    type: KeyValueCondition
+    attributes:
+    - name: project
+      type: ATTRIBUTE_TYPE_STRING
+      required: true
+filters:
+- resource: WellSchema:well
+  action: read
+  attribute: project
+  column: projectName
+  operator: EQUAL
+  conjunction: AND
